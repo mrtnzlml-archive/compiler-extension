@@ -1,0 +1,21 @@
+{
+  "name": "mrtnzlml/compiler-extension",
+  "require": {
+    "nette/application": "^2.3",
+    "nette/di": "^2.3"
+  },
+  "require-dev": {
+    "nette/tester": "^1.7",
+    "latte/latte": "^2.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mrtnzlml\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Mrtnzlml\\Tests\\": "tests/helpers/"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+parameters:
+	k1: v1
+	k2: v2
+services:
+	- Mrtnzlml\Tests\DefaultService
+	named: Mrtnzlml\Tests\Service
+extensions:
+	ext2: Mrtnzlml\Tests\CustomExtension2
+ext2:
+	ek1: ev1
+	ek2: ev2
+application:
+	mapping:
+		*: *
