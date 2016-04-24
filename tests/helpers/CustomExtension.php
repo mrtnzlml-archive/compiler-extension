@@ -15,7 +15,7 @@ parameters:
 	k3: v3
 services:
 	- Mrtnzlml\Tests\TestService
-	named: Service2
+	named: Mrtnzlml\Tests\Service2
 ext2:
 	ek2: overridden
 	ek3: ev3

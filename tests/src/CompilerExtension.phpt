@@ -71,24 +71,23 @@ class CompilerExtension extends \Tester\TestCase
 	{
 		$builder = $this->extension->getContainerBuilder();
 		Assert::same([
-			'application.application',
-			'application.presenterFactory',
-			'application.linkGenerator',
-			'routing.router',
-			'http.requestFactory',
-			'http.request',
-			'http.response',
-			'http.context',
-			'9_Mrtnzlml_Tests_TestService',
-			'named',
-			'11_Mrtnzlml_Tests_DefaultService',
-			'application.1',
-			'application.2',
-			'container',
-		], array_keys($builder->getDefinitions()));
-
-		Assert::same('Mrtnzlml\Tests\TestService', $builder->getDefinition('9_Mrtnzlml_Tests_TestService')->getFactory()->getEntity());
-		Assert::same('Mrtnzlml\Tests\Service', $builder->getDefinition('named')->getFactory()->getEntity());
+			'Nette\\Application\\Application',
+			'Nette\\Application\\PresenterFactory',
+			'Nette\\Application\\LinkGenerator',
+			'Nette\\Application\\Routers\\RouteList',
+			'Nette\\Http\\RequestFactory',
+			'@Nette\\Http\\RequestFactory::createHttpRequest',
+			'Nette\\Http\\Response',
+			'Nette\\Http\\Context',
+			'Mrtnzlml\\Tests\\DefaultService',
+			'Mrtnzlml\\Tests\\Service2',
+			'Mrtnzlml\\Tests\\TestService',
+			'NetteModule\\ErrorPresenter',
+			'NetteModule\\MicroPresenter',
+			'Nette\\DI\\Container',
+		], array_map(function (\Nette\DI\ServiceDefinition $item) {
+			return $item->getFactory()->getEntity();
+		}, array_values($builder->getDefinitions())));
 	}
 
 	public function testSetMapping()
