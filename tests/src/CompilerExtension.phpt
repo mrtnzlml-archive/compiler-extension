@@ -31,7 +31,9 @@ class CompilerExtension extends \Tester\TestCase
 		$compiler->addExtension('ext1', $this->extension);
 
 		$compiler->loadConfig(__DIR__ . '/config.neon');
-		$this->generatedContainer = $compiler->compile()[0];
+		file_put_contents($fileName = __DIR__ . '/../temp/Container.php', "<?php\n\n\n" . $compiler->compile());
+		require $fileName;
+		$this->generatedContainer = new \Container;
 	}
 
 	public function testAddConfigParameters()
@@ -76,7 +78,7 @@ class CompilerExtension extends \Tester\TestCase
 			'Nette\\Application\\LinkGenerator',
 			'Nette\\Application\\Routers\\RouteList',
 			'Nette\\Http\\RequestFactory',
-			'@Nette\\Http\\RequestFactory::createHttpRequest',
+			['@http.requestFactory', 'createHttpRequest'],
 			'Nette\\Http\\Response',
 			'Nette\\Http\\Context',
 			'Mrtnzlml\\Tests\\DefaultService',
@@ -92,16 +94,18 @@ class CompilerExtension extends \Tester\TestCase
 
 	public function testSetMapping()
 	{
-		$method = $this->generatedContainer->getMethod(\Nette\DI\Container::getMethodName('application.presenterFactory'));
-		$expectedBody = <<<'BODY'
-$service = new Nette\Application\PresenterFactory(new Nette\Bridges\ApplicationDI\PresenterFactoryCallback($this, 1, NULL));
-$service->setMapping(array('*' => '*'));
-$service->setMapping(array(
-	'Module' => 'App\*Module\Controllers\*Controller',
-));
-return $service;
-BODY;
-		Assert::same($expectedBody, $method->getBody());
+		/** @var \Nette\Application\IPresenterFactory $presenterFactory */
+		$presenterFactory = $this->generatedContainer->getService('application.presenterFactory');
+		Assert::type('Nette\Application\PresenterFactory', $presenterFactory);
+
+		$reflectionClass = new \ReflectionClass($presenterFactory);
+		$reflectionProperty = $reflectionClass->getProperty('mapping');
+		$reflectionProperty->setAccessible(TRUE);
+		Assert::same([
+			'*' => ['', '*Module\\', '*'],
+			'Nette' => ['NetteModule\\', '*\\', '*Presenter'],
+			'Module' => ['App\\', '*Module\\', 'Controllers\\*Controller'],
+		], $reflectionProperty->getValue($presenterFactory));
 	}
 
 	public function testReloadDefinition()

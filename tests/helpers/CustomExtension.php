@@ -21,7 +21,7 @@ ext2:
 	ek3: ev3
 latte:
 	macros:
-		- Ant\Grid\Latte\Macros
+		- Mrtnzlml\Tests\FakeLatteMacro
 CONFIG;
 		$this->addConfig(FileMock::create($config, 'neon'));
 	}

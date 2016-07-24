@@ -9,7 +9,7 @@ before_script:
   - travis_retry composer install --prefer-dist
 
 script:
-  - vendor/bin/tester tests
+  - vendor/bin/tester tests -C
 
 notifications:
   email: false
