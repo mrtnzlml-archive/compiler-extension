@@ -4,7 +4,7 @@ namespace Mrtnzlml\Tests;
 
 use Tester\FileMock;
 
-class CustomExtension extends \Mrtnzlml\CompilerExtension
+class CustomExtension1 extends \Mrtnzlml\CompilerExtension
 {
 
 	public function loadConfiguration()
@@ -14,7 +14,7 @@ parameters:
 	k2: overridden
 	k3: v3
 services:
-	- Mrtnzlml\Tests\TestService('a%%b', %%extensionParameter%%, '%%')
+	- Mrtnzlml\Tests\Service3('a%%b', %%extensionParameter%%, '%%')
 	named: Mrtnzlml\Tests\Service2
 ext2:
 	ek2: overridden

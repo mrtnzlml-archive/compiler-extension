@@ -7,7 +7,6 @@ php:
 before_script:
   - composer selfupdate --no-progress
   - travis_retry composer install --prefer-dist
-  - mkdir tests/temp
 
 script:
   - vendor/bin/tester tests -C

@@ -12,16 +12,16 @@ require dirname(__DIR__) . '/bootstrap.php';
 class CompilerExtension extends \Tester\TestCase
 {
 
-	/** @var CustomExtension */
+	/** @var CustomExtension1 */
 	private $extension;
 
-	/** @var \Nette\PhpGenerator\ClassType */
+	/** @var \Nette\DI\Container */
 	private $generatedContainer;
 
 	public function setUp()
 	{
 		$compiler = new \Nette\DI\Compiler;
-		$this->extension = (new CustomExtension)->setCompiler($compiler, 'ext');
+		$this->extension = (new CustomExtension1)->setCompiler($compiler, 'ext');
 
 		$compiler->addExtension('extensions', new \Nette\DI\Extensions\ExtensionsExtension);
 		$compiler->addExtension('latte', new \Nette\Bridges\ApplicationDI\LatteExtension(dirname(__DIR__) . '/temp'));
@@ -31,24 +31,23 @@ class CompilerExtension extends \Tester\TestCase
 		$compiler->addExtension('ext1', $this->extension);
 
 		$compiler->loadConfig(__DIR__ . '/config.neon');
-		file_put_contents($fileName = __DIR__ . '/../temp/Container.php', "<?php\n\n\n" . $compiler->compile());
-		require $fileName;
-		$this->generatedContainer = new \Container;
+		$compiler = $compiler->setClassName($className = '_' . md5(mt_rand(100, 999)));
+		eval($compiler->compile());
+		$this->generatedContainer = new $className;
 	}
 
 	public function testAddConfigParameters()
 	{
-		$builder = $this->extension->getContainerBuilder();
 		Assert::same([
 			'k1' => 'v1',
 			'k2' => 'overridden',
 			'k3' => 'v3',
-		], $builder->parameters);
+		], $this->generatedContainer->getParameters());
 	}
 
 	public function testExtensionParametersExpand()
 	{
-		$this->generatedContainer->getByType(\Mrtnzlml\Tests\TestService::class);
+		$this->generatedContainer->getByType(\Mrtnzlml\Tests\Service3::class);
 	}
 
 	public function testAddConfigExtensions()
@@ -59,7 +58,7 @@ class CompilerExtension extends \Tester\TestCase
 			'application' => 'Nette\\Bridges\\ApplicationDI\\ApplicationExtension',
 			'routing' => 'Nette\\Bridges\\ApplicationDI\\RoutingExtension',
 			'http' => 'Nette\\Bridges\\HttpDI\\HttpExtension',
-			'ext1' => 'Mrtnzlml\\Tests\\CustomExtension',
+			'ext1' => 'Mrtnzlml\\Tests\\CustomExtension1',
 			'ext2' => 'Mrtnzlml\\Tests\\CustomExtension2',
 			'ext3' => 'Mrtnzlml\\Tests\\ExtensionEmptyConfig',
 		], array_map(function ($item) {
@@ -87,9 +86,9 @@ class CompilerExtension extends \Tester\TestCase
 			['@http.requestFactory', 'createHttpRequest'],
 			'Nette\\Http\\Response',
 			'Nette\\Http\\Context',
-			'Mrtnzlml\\Tests\\DefaultService',
-			'Mrtnzlml\\Tests\\Service2',
-			'Mrtnzlml\\Tests\\TestService',
+			'Mrtnzlml\\Tests\\Service2', //overridden (named service)
+			'Mrtnzlml\\Tests\\Service4', //registered in config.neon
+			'Mrtnzlml\\Tests\\Service3', //registered later in extension
 			'NetteModule\\ErrorPresenter',
 			'NetteModule\\MicroPresenter',
 			'Nette\\DI\\Container',

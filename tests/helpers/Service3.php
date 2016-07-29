@@ -2,7 +2,7 @@
 
 namespace Mrtnzlml\Tests;
 
-class TestService extends \Mrtnzlml\CompilerExtension
+class Service3 extends \Mrtnzlml\CompilerExtension
 {
 
 	public function __construct($a, $b, $c)
