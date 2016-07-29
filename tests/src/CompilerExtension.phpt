@@ -46,6 +46,11 @@ class CompilerExtension extends \Tester\TestCase
 		], $builder->parameters);
 	}
 
+	public function testExtensionParametersExpand()
+	{
+		$this->generatedContainer->getByType(\Mrtnzlml\Tests\TestService::class);
+	}
+
 	public function testAddConfigExtensions()
 	{
 		Assert::same([

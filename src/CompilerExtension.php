@@ -34,7 +34,19 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 		}
 		$this->processExtensions($config);
 		if (isset($config['services'])) {
-			$this->compiler->addConfig(['services' => $config['services']]);
+			$services = $config['services'];
+
+			foreach ($services as $_ => $def) {
+				if ($def instanceof \Nette\DI\Statement && array_key_exists('arguments', $def)) {
+					foreach ($def->arguments as &$argument) {
+						if(preg_match('~%%([^,)]+)%%~', $argument, $matches)) {
+							$argument = $this->getConfig()[$matches[1]];
+						}
+					}
+				}
+			}
+
+			$this->compiler->addConfig(['services' => $services]);
 		}
 		return $config;
 	}

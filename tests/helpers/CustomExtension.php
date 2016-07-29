@@ -14,7 +14,7 @@ parameters:
 	k2: overridden
 	k3: v3
 services:
-	- Mrtnzlml\Tests\TestService
+	- Mrtnzlml\Tests\TestService('a%%b', %%extensionParameter%%, '%%')
 	named: Mrtnzlml\Tests\Service2
 ext2:
 	ek2: overridden
