@@ -56,6 +56,7 @@ class CompilerExtension extends \Tester\TestCase
 			'http' => 'Nette\\Bridges\\HttpDI\\HttpExtension',
 			'ext1' => 'Mrtnzlml\\Tests\\CustomExtension',
 			'ext2' => 'Mrtnzlml\\Tests\\CustomExtension2',
+			'ext3' => 'Mrtnzlml\\Tests\\ExtensionEmptyConfig',
 		], array_map(function ($item) {
 			return get_class($item);
 		}, $this->extension->getExtensions()));

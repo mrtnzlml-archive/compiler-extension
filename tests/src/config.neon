@@ -6,6 +6,7 @@ services:
 	named: Mrtnzlml\Tests\Service
 extensions:
 	ext2: Mrtnzlml\Tests\CustomExtension2
+	ext3: Mrtnzlml\Tests\ExtensionEmptyConfig
 ext2:
 	ek1: ev1
 	ek2: ev2

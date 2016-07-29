@@ -33,7 +33,9 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 			);
 		}
 		$this->processExtensions($config);
-		$this->compiler->addConfig(['services' => $config['services']]);
+		if (isset($config['services'])) {
+			$this->compiler->addConfig(['services' => $config['services']]);
+		}
 		return $config;
 	}
 
