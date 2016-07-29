@@ -47,7 +47,9 @@ class CompilerExtension extends \Tester\TestCase
 
 	public function testExtensionParametersExpand()
 	{
+		//there is test in constructor of Service3
 		$this->generatedContainer->getByType(\Mrtnzlml\Tests\Service3::class);
+		//do not add another asserts so it will fail when the test forgets to execute an assertion
 	}
 
 	public function testAddConfigExtensions()

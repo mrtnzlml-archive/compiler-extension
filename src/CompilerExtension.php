@@ -39,7 +39,7 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 			foreach ($services as $_ => $def) {
 				if ($def instanceof \Nette\DI\Statement && array_key_exists('arguments', $def)) {
 					foreach ($def->arguments as &$argument) {
-						if(preg_match('~%%([^,)]+)%%~', $argument, $matches)) {
+						if(is_string($argument) && preg_match('~%%([^,)]+)%%~', $argument, $matches)) {
 							$argument = $this->getConfig()[$matches[1]];
 						}
 					}
