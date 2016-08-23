@@ -51,7 +51,7 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 						}
 					}
 				} elseif (is_array($def) && array_key_exists('arguments', $def)) {
-					$replacedArguments = [];
+					$replacedArguments = $def['arguments'];
 					foreach ($def['arguments'] as $key => $argument) {
 						if ($replaced = $replacePlaceholder($argument)) {
 							$replacedArguments[$key] = $replaced;

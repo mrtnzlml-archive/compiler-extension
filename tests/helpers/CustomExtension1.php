@@ -17,6 +17,7 @@ services:
 	- Mrtnzlml\Tests\Service3(@named(), %%extensionParameter%%, '%%')
 	- implement: Mrtnzlml\Tests\IService5Factory
 	  arguments:
+	  	- test
 	  	- %%extensionParameter%%
 	named: Mrtnzlml\Tests\Service2
 ext2:
