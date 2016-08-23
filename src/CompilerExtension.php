@@ -34,33 +34,7 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 		}
 		$this->processExtensions($config);
 		if (isset($config['services'])) {
-			$services = $config['services'];
-
-			//expand %%extension_variables%%
-			$replacePlaceholder = function ($stringWithPlaceholder) {
-				if (is_string($stringWithPlaceholder) && preg_match('~%%([^,)]+)%%~', $stringWithPlaceholder, $matches)) {
-					return $this->getConfig()[$matches[1]];
-				}
-				return FALSE;
-			};
-			foreach ($services as $_ => &$def) {
-				if ($def instanceof \Nette\DI\Statement) {
-					foreach ($def->arguments as &$argumentRef) {
-						if ($replaced = $replacePlaceholder($argumentRef)) {
-							$argumentRef = $replaced;
-						}
-					}
-				} elseif (is_array($def) && array_key_exists('arguments', $def)) {
-					$replacedArguments = $def['arguments'];
-					foreach ($def['arguments'] as $key => $argument) {
-						if ($replaced = $replacePlaceholder($argument)) {
-							$replacedArguments[$key] = $replaced;
-						}
-					}
-					$def['arguments'] = $replacedArguments;
-				}
-			}
-
+			$services = $this->expandExtensionParametersInServices($config['services']);
 			$this->compiler->addConfig(['services' => $services]);
 		}
 		return $config;
@@ -117,6 +91,41 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 			}
 			$extension->loadConfiguration();
 		}
+	}
+
+	/**
+	 * Expands %%variables%% in extensions scope.
+	 */
+	private function expandExtensionParametersInServices($services)
+	{
+		$replacePlaceholder = function ($stringWithPlaceholder) {
+			if (is_string($stringWithPlaceholder) && preg_match('~%%([^,)]+)%%~', $stringWithPlaceholder, $matches)) {
+				return $this->getConfig()[$matches[1]];
+			}
+			throw new \Mrtnzlml\CannotBeReplacedException;
+		};
+		foreach ($services as $_ => &$def) {
+			if ($def instanceof \Nette\DI\Statement) {
+				foreach ($def->arguments as &$argumentRef) {
+					try {
+						$argumentRef = $replacePlaceholder($argumentRef);
+					} catch (\Mrtnzlml\CannotBeReplacedException $exc) {
+						//never mind
+					}
+				}
+			} elseif (is_array($def) && array_key_exists('arguments', $def)) {
+				$replacedArguments = $def['arguments'];
+				foreach ($def['arguments'] as $key => $argument) {
+					try {
+						$replacedArguments[$key] = $replacePlaceholder($argument);
+					} catch (\Mrtnzlml\CannotBeReplacedException $exc) {
+						//never mind
+					}
+				}
+				$def['arguments'] = $replacedArguments;
+			}
+		}
+		return $services;
 	}
 
 }

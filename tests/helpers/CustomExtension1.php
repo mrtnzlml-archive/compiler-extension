@@ -14,11 +14,13 @@ parameters:
 	k2: overridden
 	k3: v3
 services:
-	- Mrtnzlml\Tests\Service3(@named(), %%extensionParameter%%, '%%')
+	- Mrtnzlml\Tests\Service3(@named(), %%numericExtensionParameter%%, '%%')
 	- implement: Mrtnzlml\Tests\IService5Factory
 	  arguments:
 	  	- test
-	  	- %%extensionParameter%%
+	  	- %%numericExtensionParameter%%
+	  	- %%falseExtensionParameter%%
+	  	- %%nullExtensionParameter%%
 	named: Mrtnzlml\Tests\Service2
 ext2:
 	ek2: overridden

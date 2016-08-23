@@ -8,7 +8,9 @@ extensions:
 	ext2: Mrtnzlml\Tests\CustomExtension2
 	ext3: Mrtnzlml\Tests\ExtensionEmptyConfig
 ext1: # \Mrtnzlml\Tests\CustomExtension1
-	extensionParameter: 159753
+	numericExtensionParameter: 159753
+	falseExtensionParameter: no
+	nullExtensionParameter: NULL
 ext2:
 	ek1: ev1
 	ek2: ev2
