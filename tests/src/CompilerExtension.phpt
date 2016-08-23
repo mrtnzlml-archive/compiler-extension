@@ -52,6 +52,13 @@ class CompilerExtension extends \Tester\TestCase
 		//do not add another asserts so it will fail when the test forgets to execute an assertion
 	}
 
+	public function testExtensionParametersExpandFactory()
+	{
+		//there is test in constructor of Service5
+		$this->generatedContainer->getByType(\Mrtnzlml\Tests\IService5Factory::class)->create();
+		//do not add another asserts so it will fail when the test forgets to execute an assertion
+	}
+
 	public function testAddConfigExtensions()
 	{
 		Assert::same([
@@ -90,6 +97,7 @@ class CompilerExtension extends \Tester\TestCase
 			'Nette\\Http\\Context',
 			'Mrtnzlml\\Tests\\Service2', //overridden (named service)
 			'Mrtnzlml\\Tests\\Service4', //registered in config.neon
+			'Mrtnzlml\\Tests\\Service5', //registered later in extension
 			'Mrtnzlml\\Tests\\Service3', //registered later in extension
 			'NetteModule\\ErrorPresenter',
 			'NetteModule\\MicroPresenter',

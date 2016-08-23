@@ -15,6 +15,9 @@ parameters:
 	k3: v3
 services:
 	- Mrtnzlml\Tests\Service3(@named(), %%extensionParameter%%, '%%')
+	- implement: Mrtnzlml\Tests\IService5Factory
+	  arguments:
+	  	- %%extensionParameter%%
 	named: Mrtnzlml\Tests\Service2
 ext2:
 	ek2: overridden

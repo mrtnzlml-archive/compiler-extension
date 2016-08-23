@@ -36,13 +36,28 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 		if (isset($config['services'])) {
 			$services = $config['services'];
 
-			foreach ($services as $_ => $def) {
-				if ($def instanceof \Nette\DI\Statement && array_key_exists('arguments', $def)) {
-					foreach ($def->arguments as &$argument) {
-						if(is_string($argument) && preg_match('~%%([^,)]+)%%~', $argument, $matches)) {
-							$argument = $this->getConfig()[$matches[1]];
+			//expand %%extension_variables%%
+			$replacePlaceholder = function ($stringWithPlaceholder) {
+				if (is_string($stringWithPlaceholder) && preg_match('~%%([^,)]+)%%~', $stringWithPlaceholder, $matches)) {
+					return $this->getConfig()[$matches[1]];
+				}
+				return FALSE;
+			};
+			foreach ($services as $_ => &$def) {
+				if ($def instanceof \Nette\DI\Statement) {
+					foreach ($def->arguments as &$argumentRef) {
+						if ($replaced = $replacePlaceholder($argumentRef)) {
+							$argumentRef = $replaced;
 						}
 					}
+				} elseif (is_array($def) && array_key_exists('arguments', $def)) {
+					$replacedArguments = [];
+					foreach ($def['arguments'] as $key => $argument) {
+						if ($replaced = $replacePlaceholder($argument)) {
+							$replacedArguments[$key] = $replaced;
+						}
+					}
+					$def['arguments'] = $replacedArguments;
 				}
 			}
 
