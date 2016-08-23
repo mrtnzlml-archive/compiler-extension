@@ -100,7 +100,12 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 	{
 		$replacePlaceholder = function ($stringWithPlaceholder) {
 			if (is_string($stringWithPlaceholder) && preg_match('~%%([^,)]+)%%~', $stringWithPlaceholder, $matches)) {
-				return $this->getConfig()[$matches[1]];
+				$config = $this->getConfig();
+				$parameterName = $matches[1];
+				if (!array_key_exists($parameterName, $config)) {
+					throw new \OutOfRangeException("Cannot replace %%$parameterName%% because parameter does not exist.");
+				}
+				return $config[$parameterName];
 			}
 			throw new \Mrtnzlml\CannotBeReplacedException;
 		};

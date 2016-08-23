@@ -83,6 +83,15 @@ class CompilerExtension extends \Tester\TestCase
 		], $extension->getConfig());
 	}
 
+	public function testReplaceUnknownExtensionParameter()
+	{
+		$compiler = new \Nette\DI\Compiler;
+		$compiler->addExtension('ext3', new \Mrtnzlml\Tests\CustomExtension3);
+		Assert::throws(function () use ($compiler) {
+			$compiler->compile();
+		}, \OutOfRangeException::class, 'Cannot replace %%thisExtensionParameterDoesNotExist%% because parameter does not exist.');
+	}
+
 	public function testAddConfigServices()
 	{
 		$builder = $this->extension->getContainerBuilder();
