@@ -1,8 +1,8 @@
 <?php
 
-namespace Mrtnzlml\Tests;
+namespace Adeira\Tests;
 
-class ExtensionEmptyConfig extends \Mrtnzlml\CompilerExtension
+class ExtensionEmptyConfig extends \Adeira\CompilerExtension
 {
 
 	public function loadConfiguration()

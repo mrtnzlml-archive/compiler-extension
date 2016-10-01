@@ -1,6 +1,6 @@
 # Enhanced CompilerExtension for Nette Framework
 
-[![Build Status](https://travis-ci.org/mrtnzlml/compiler-extension.svg?branch=master)](https://travis-ci.org/mrtnzlml/compiler-extension)
+[![Build Status](https://travis-ci.org/adeira/compiler-extension.svg?branch=master)](https://travis-ci.org/adeira/compiler-extension)
 
 If you have more complicated project structure with a lot of bundles (DIC extensions), it's very common that you have to setup a lot of thinks and it may be quite difficult. But not with this `CompilerExtension`:
 
@@ -9,7 +9,7 @@ If you have more complicated project structure with a lot of bundles (DIC extens
 
 namespace Ant\Articles\DI;
 
-class ArticlesExtension extends \Mrtnzlml\CompilerExtension
+class ArticlesExtension extends \Adeira\CompilerExtension
 {
 
 	public function loadConfiguration()
@@ -48,7 +48,7 @@ application:
 		*: *
 ```
 
-And now you'll add another config in your DIC extension using `Mrtnzlml\CompilerExtension::addConfig`:
+And now you'll add another config in your DIC extension using `Adeira\CompilerExtension::addConfig`:
 
 ```
 parameters:
@@ -101,6 +101,6 @@ services:
 	- Tests\TestService(%%ext_key2%%)
 ```
 
-Remember that this is possible only if you are using custom config added by `Mrtnzlml\CompilerExtension::addConfig` method. It will not work in configs added in bootstrap file (via `Nette\DI\Compiler::addConfig`). This is because only under extension it's possible to get key from the right extension section (`ext2.ext_key2` in this case).
+Remember that this is possible only if you are using custom config added by `Adeira\CompilerExtension::addConfig` method. It will not work in configs added in bootstrap file (via `Nette\DI\Compiler::addConfig`). This is because only under extension it's possible to get key from the right extension section (`ext2.ext_key2` in this case).
 
-You can also play with other extensions (`latte` in this example). This is however the most problematic part, because it's needed to remove definitions and aliases from DIC, but it's not easy to figure out which one. This library is trying to figure out what to do, but it's not silver bullet. However you can specify regular expression of service names to be reloaded using `\Mrtnzlml\CompilerExtension::reloadDefinition()` method.
+You can also play with other extensions (`latte` in this example). This is however the most problematic part, because it's needed to remove definitions and aliases from DIC, but it's not easy to figure out which one. This library is trying to figure out what to do, but it's not silver bullet. However you can specify regular expression of service names to be reloaded using `\Adeira\CompilerExtension::reloadDefinition()` method.

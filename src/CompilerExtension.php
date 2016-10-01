@@ -1,6 +1,6 @@
 <?php
 
-namespace Mrtnzlml;
+namespace Adeira;
 
 use Nette\Application\IPresenterFactory;
 
@@ -107,14 +107,14 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 				}
 				return $config[$parameterName];
 			}
-			throw new \Mrtnzlml\CannotBeReplacedException;
+			throw new \Adeira\CannotBeReplacedException;
 		};
 		foreach ($services as $_ => &$def) {
 			if ($def instanceof \Nette\DI\Statement) {
 				foreach ($def->arguments as &$argumentRef) {
 					try {
 						$argumentRef = $replacePlaceholder($argumentRef);
-					} catch (\Mrtnzlml\CannotBeReplacedException $exc) {
+					} catch (\Adeira\CannotBeReplacedException $exc) {
 						//never mind
 					}
 				}
@@ -123,7 +123,7 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 				foreach ($def['arguments'] as $key => $argument) {
 					try {
 						$replacedArguments[$key] = $replacePlaceholder($argument);
-					} catch (\Mrtnzlml\CannotBeReplacedException $exc) {
+					} catch (\Adeira\CannotBeReplacedException $exc) {
 						//never mind
 					}
 				}

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mrtnzlml\Tests;
+namespace Adeira\Tests;
 
 use Tester\FileMock;
 
-class CustomExtension1 extends \Mrtnzlml\CompilerExtension
+class CustomExtension1 extends \Adeira\CompilerExtension
 {
 
 	public function loadConfiguration()
@@ -14,20 +14,20 @@ parameters:
 	k2: overridden
 	k3: v3
 services:
-	- Mrtnzlml\Tests\Service3(@named(), %%numericExtensionParameter%%, '%%')
-	- implement: Mrtnzlml\Tests\IService5Factory
+	- Adeira\Tests\Service3(@named(), %%numericExtensionParameter%%, '%%')
+	- implement: Adeira\Tests\IService5Factory
 	  arguments:
 	  	- test
 	  	- %%numericExtensionParameter%%
 	  	- %%falseExtensionParameter%%
 	  	- %%nullExtensionParameter%%
-	named: Mrtnzlml\Tests\Service2
+	named: Adeira\Tests\Service2
 ext2:
 	ek2: overridden
 	ek3: ev3
 latte:
 	macros:
-		- Mrtnzlml\Tests\FakeLatteMacro
+		- Adeira\Tests\FakeLatteMacro
 CONFIG;
 		$this->addConfig(FileMock::create($config, 'neon'));
 	}

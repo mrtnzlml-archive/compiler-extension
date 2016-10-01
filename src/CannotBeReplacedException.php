@@ -1,6 +1,6 @@
 <?php
 
-namespace Mrtnzlml;
+namespace Adeira;
 
 class CannotBeReplacedException extends \Exception
 {

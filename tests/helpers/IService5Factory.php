@@ -1,6 +1,6 @@
 <?php
 
-namespace Mrtnzlml\Tests;
+namespace Adeira\Tests;
 
 interface IService5Factory
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mrtnzlml\Tests;
+namespace Adeira\Tests;
 
 use Tester\Assert;
 
@@ -48,14 +48,14 @@ class CompilerExtension extends \Tester\TestCase
 	public function testExtensionParametersExpand()
 	{
 		//there is test in constructor of Service3
-		$this->generatedContainer->getByType(\Mrtnzlml\Tests\Service3::class);
+		$this->generatedContainer->getByType(\Adeira\Tests\Service3::class);
 		//do not add another asserts so it will fail when the test forgets to execute an assertion
 	}
 
 	public function testExtensionParametersExpandFactory()
 	{
 		//there is test in constructor of Service5
-		$this->generatedContainer->getByType(\Mrtnzlml\Tests\IService5Factory::class)->create();
+		$this->generatedContainer->getByType(\Adeira\Tests\IService5Factory::class)->create();
 		//do not add another asserts so it will fail when the test forgets to execute an assertion
 	}
 
@@ -67,15 +67,15 @@ class CompilerExtension extends \Tester\TestCase
 			'application' => 'Nette\\Bridges\\ApplicationDI\\ApplicationExtension',
 			'routing' => 'Nette\\Bridges\\ApplicationDI\\RoutingExtension',
 			'http' => 'Nette\\Bridges\\HttpDI\\HttpExtension',
-			'ext1' => 'Mrtnzlml\\Tests\\CustomExtension1',
-			'ext2' => 'Mrtnzlml\\Tests\\CustomExtension2',
-			'ext3' => 'Mrtnzlml\\Tests\\ExtensionEmptyConfig',
+			'ext1' => 'Adeira\\Tests\\CustomExtension1',
+			'ext2' => 'Adeira\\Tests\\CustomExtension2',
+			'ext3' => 'Adeira\\Tests\\ExtensionEmptyConfig',
 		], array_map(function ($item) {
 			return get_class($item);
 		}, $this->extension->getExtensions()));
 
 		/** @var CustomExtension2 $extension */
-		$extension = $this->extension->getExtensions('Mrtnzlml\Tests\CustomExtension2')['ext2'];
+		$extension = $this->extension->getExtensions('Adeira\Tests\CustomExtension2')['ext2'];
 		Assert::same([
 			'ek1' => 'ev1',
 			'ek2' => 'overridden',
@@ -86,7 +86,7 @@ class CompilerExtension extends \Tester\TestCase
 	public function testReplaceUnknownExtensionParameter()
 	{
 		$compiler = new \Nette\DI\Compiler;
-		$compiler->addExtension('ext3', new \Mrtnzlml\Tests\CustomExtension3);
+		$compiler->addExtension('ext3', new \Adeira\Tests\CustomExtension3);
 		Assert::throws(function () use ($compiler) {
 			$compiler->compile();
 		}, \OutOfRangeException::class, 'Cannot replace %%thisExtensionParameterDoesNotExist%% because parameter does not exist.');
@@ -104,10 +104,10 @@ class CompilerExtension extends \Tester\TestCase
 			['@http.requestFactory', 'createHttpRequest'],
 			'Nette\\Http\\Response',
 			'Nette\\Http\\Context',
-			'Mrtnzlml\\Tests\\Service2', //overridden (named service)
-			'Mrtnzlml\\Tests\\Service4', //registered in config.neon
-			'Mrtnzlml\\Tests\\Service5', //registered later in extension
-			'Mrtnzlml\\Tests\\Service3', //registered later in extension
+			'Adeira\\Tests\\Service2', //overridden (named service)
+			'Adeira\\Tests\\Service4', //registered in config.neon
+			'Adeira\\Tests\\Service5', //registered later in extension
+			'Adeira\\Tests\\Service3', //registered later in extension
 			'NetteModule\\ErrorPresenter',
 			'NetteModule\\MicroPresenter',
 			'Nette\\DI\\Container',

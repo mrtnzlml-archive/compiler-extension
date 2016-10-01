@@ -1,7 +1,7 @@
 <?php
 
-namespace Mrtnzlml\Tests;
+namespace Adeira\Tests;
 
-class FakeLatteMacro extends \Mrtnzlml\CompilerExtension
+class FakeLatteMacro extends \Adeira\CompilerExtension
 {
 }

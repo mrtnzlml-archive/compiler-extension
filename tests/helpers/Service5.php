@@ -1,8 +1,8 @@
 <?php
 
-namespace Mrtnzlml\Tests;
+namespace Adeira\Tests;
 
-class Service5 extends \Mrtnzlml\CompilerExtension
+class Service5 extends \Adeira\CompilerExtension
 {
 
 	public function __construct($abc, $xyz, $false, $null)

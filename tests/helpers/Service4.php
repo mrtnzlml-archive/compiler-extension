@@ -1,7 +1,7 @@
 <?php
 
-namespace Mrtnzlml\Tests;
+namespace Adeira\Tests;
 
-class Service4 extends \Mrtnzlml\CompilerExtension
+class Service4 extends \Adeira\CompilerExtension
 {
 }

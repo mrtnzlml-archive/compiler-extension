@@ -2,12 +2,12 @@ parameters:
 	k1: v1
 	k2: v2
 services:
-	- Mrtnzlml\Tests\Service4
-	named: Mrtnzlml\Tests\Service1
+	- Adeira\Tests\Service4
+	named: Adeira\Tests\Service1
 extensions:
-	ext2: Mrtnzlml\Tests\CustomExtension2
-	ext3: Mrtnzlml\Tests\ExtensionEmptyConfig
-ext1: # \Mrtnzlml\Tests\CustomExtension1
+	ext2: Adeira\Tests\CustomExtension2
+	ext3: Adeira\Tests\ExtensionEmptyConfig
+ext1: # \Adeira\Tests\CustomExtension1
 	numericExtensionParameter: 159753
 	falseExtensionParameter: no
 	nullExtensionParameter: NULL

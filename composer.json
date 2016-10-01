@@ -1,5 +1,5 @@
 {
-  "name": "mrtnzlml/compiler-extension",
+  "name": "adeira/compiler-extension",
   "require": {
     "nette/application": "^2.4",
     "nette/di": "^2.4"
@@ -10,12 +10,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Mrtnzlml\\": "src/"
+      "Adeira\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Mrtnzlml\\Tests\\": "tests/helpers/"
+      "Adeira\\Tests\\": "tests/helpers/"
     }
   }
 }
