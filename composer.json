@@ -1,5 +1,6 @@
 {
   "name": "adeira/compiler-extension",
+  "license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
   "require": {
     "nette/application": "^2.4",
     "nette/di": "^2.4"
