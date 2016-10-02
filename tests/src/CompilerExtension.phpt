@@ -89,7 +89,7 @@ class CompilerExtension extends \Tester\TestCase
 		$compiler->addExtension('ext3', new \Adeira\Tests\CustomExtension3);
 		Assert::throws(function () use ($compiler) {
 			$compiler->compile();
-		}, \OutOfRangeException::class, 'Cannot replace %%thisExtensionParameterDoesNotExist%% because parameter does not exist.');
+		}, \OutOfRangeException::class, 'Cannot replace %%%%thisExtensionParameterDoesNotExist%%%% because parameter does not exist.');
 	}
 
 	public function testAddConfigServices()
