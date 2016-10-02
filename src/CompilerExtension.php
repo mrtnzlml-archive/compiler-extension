@@ -109,7 +109,7 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 			}
 			throw new \Adeira\CannotBeReplacedException;
 		};
-		foreach ($services as $_ => &$def) {
+		foreach ($services as $serviceName => &$def) {
 			if ($def instanceof \Nette\DI\Statement) {
 				foreach ($def->arguments as &$argumentRef) {
 					try {
