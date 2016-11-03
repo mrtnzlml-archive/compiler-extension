@@ -1,2 +1,3 @@
-/temp/
-/src/output/
+/temp/*
+**.actual
+**.expected

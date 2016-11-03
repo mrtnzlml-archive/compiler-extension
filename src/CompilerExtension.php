@@ -8,21 +8,14 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 {
 
 	/**
-	 * How to do it better? I need to reload extension configuration and it means remove old definitions and aliases from container and
-	 * call ->loadConfiguration() again. But I don't know what to remove without naming it here...
-	 */
-	private $removeDefinitions = [
-		'latte\..+',
-		'nette\.latte',
-	];
-
-	/**
 	 * Should be called in loadConfiguration().
 	 *
 	 * @return array
 	 */
 	protected function addConfig($configFile)
 	{
+		//TODO (?) debug_backtrace()[1]['function'] === 'loadConfiguration'
+
 		$builder = $this->getContainerBuilder();
 		$config = $this->loadFromFile($configFile);
 		if (isset($config['parameters'])) {
@@ -55,17 +48,12 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 		$builder->getDefinition($presenterFactory)->addSetup('setMapping', [$mapping]);
 	}
 
+	/**
+	 * @deprecated
+	 */
 	protected function reloadDefinition($regex)
 	{
-		if (is_string($regex)) {
-			array_push($this->removeDefinitions, $regex);
-		} elseif (is_array($regex)) {
-			foreach ($regex as $r) {
-				array_push($this->removeDefinitions, $r);
-			}
-		} else {
-			throw new \Nette\InvalidArgumentException('Definition regex should be string name or array od string names.');
-		}
+		trigger_error(__METHOD__ . ' is deprecated. This should be fully automatic now. Just remove it and you are ready to go.', E_USER_DEPRECATED);
 	}
 
 	private function processExtensions($config)
@@ -78,18 +66,6 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 		foreach (array_intersect_key($extensions, $config) as $name => $extension) {
 			$newConfig = \Nette\DI\Config\Helpers::merge($config[$name], $extension->getConfig());
 			$extension->setConfig($newConfig);
-
-			$builder = $this->getContainerBuilder();
-			$aliases = $builder->getAliases();
-			foreach ($builder->getDefinitions() as $defName => $definition) {
-				foreach ($this->removeDefinitions as $regex) {
-					if (preg_match('~' . $regex . '~i', $defName)) {
-						$builder->removeAlias(array_search($defName, $aliases));
-						$builder->removeDefinition($defName);
-					}
-				}
-			}
-			$extension->loadConfiguration();
 		}
 	}
 

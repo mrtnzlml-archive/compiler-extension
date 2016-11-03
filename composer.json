@@ -2,13 +2,14 @@
   "name": "adeira/compiler-extension",
   "license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
   "require": {
+    "adeira/code-quality": "^1.0",
     "nette/application": "^2.4",
-    "nette/di": "^2.4",
-    "adeira/code-quality": "^1.0"
+    "nette/di": "^2.4"
   },
   "require-dev": {
-    "nette/tester": "2.0.x-dev as v1.7",
-    "latte/latte": "^2.4"
+    "latte/latte": "^2.4",
+    "nette/bootstrap": "^2.4",
+    "nette/tester": "2.0.x-dev as v1.7"
   },
   "autoload": {
     "psr-4": {

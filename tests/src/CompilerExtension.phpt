@@ -2,6 +2,8 @@
 
 namespace Adeira\Tests;
 
+use Nette;
+use Tester;
 use Tester\Assert;
 
 require dirname(__DIR__) . '/bootstrap.php';
@@ -12,37 +14,41 @@ require dirname(__DIR__) . '/bootstrap.php';
 class CompilerExtension extends \Tester\TestCase
 {
 
-	/** @var CustomExtension1 */
-	private $extension;
+	/** @var \Nette\DI\Compiler */
+	private $compiler;
 
 	/** @var \Nette\DI\Container */
 	private $generatedContainer;
 
 	public function setUp()
 	{
-		$compiler = new \Nette\DI\Compiler;
-		$this->extension = (new CustomExtension1)->setCompiler($compiler, 'ext');
+		Tester\Helpers::purge($tempDir = __DIR__ . '/../temp/thread_' . getenv(Tester\Environment::THREAD));
 
-		$compiler->addExtension('extensions', new \Nette\DI\Extensions\ExtensionsExtension);
-		$compiler->addExtension('latte', new \Nette\Bridges\ApplicationDI\LatteExtension(dirname(__DIR__) . '/temp'));
-		$compiler->addExtension('application', new \Nette\Bridges\ApplicationDI\ApplicationExtension);
-		$compiler->addExtension('routing', new \Nette\Bridges\ApplicationDI\RoutingExtension);
-		$compiler->addExtension('http', new \Nette\Bridges\HttpDI\HttpExtension);
-		$compiler->addExtension('ext1', $this->extension);
-
-		$compiler->loadConfig(__DIR__ . '/config.neon');
-		$compiler = $compiler->setClassName($className = '_' . md5(mt_rand(100, 999)));
-		eval($compiler->compile());
-		$this->generatedContainer = new $className;
+		$configurator = new Nette\Configurator;
+		$configurator->setTempDirectory($tempDir);
+		$configurator->addConfig(__DIR__ . '/config.neon');
+		$configurator->onCompile[] = function (Nette\Configurator $sender, Nette\DI\Compiler $compiler) {
+			$this->compiler = $compiler;
+		};
+		$dic = $configurator->createContainer();
+		$this->generatedContainer = $dic;
 	}
 
+	/**
+	 * Original parameters are added in config.neon:
+	 *
+	 * parameters:
+	 *     k1: v1
+	 *     k2: v2
+	 *
+	 * These parameters are overridden by CustomExtension1 using addConfig method.
+	 */
 	public function testAddConfigParameters()
 	{
-		Assert::same([
-			'k1' => 'v1',
-			'k2' => 'overridden',
-			'k3' => 'v3',
-		], $this->generatedContainer->getParameters());
+		$parameters = $this->generatedContainer->getParameters();
+		Assert::same('v1', $parameters['k1']);
+		Assert::same('overridden', $parameters['k2']);
+		Assert::same('v3', $parameters['k3']);
 	}
 
 	public function testExtensionParametersExpand()
@@ -62,20 +68,27 @@ class CompilerExtension extends \Tester\TestCase
 	public function testAddConfigExtensions()
 	{
 		Assert::same([
+			'php' => 'Nette\\DI\\Extensions\\PhpExtension',
+			'constants' => 'Nette\\DI\\Extensions\\ConstantsExtension',
 			'extensions' => 'Nette\\DI\\Extensions\\ExtensionsExtension',
-			'latte' => 'Nette\\Bridges\\ApplicationDI\\LatteExtension',
 			'application' => 'Nette\\Bridges\\ApplicationDI\\ApplicationExtension',
-			'routing' => 'Nette\\Bridges\\ApplicationDI\\RoutingExtension',
+			'decorator' => 'Nette\\DI\\Extensions\\DecoratorExtension',
+			'cache' => 'Nette\\Bridges\\CacheDI\\CacheExtension',
+			'di' => 'Nette\\DI\\Extensions\\DIExtension',
 			'http' => 'Nette\\Bridges\\HttpDI\\HttpExtension',
+			'latte' => 'Nette\\Bridges\\ApplicationDI\\LatteExtension',
+			'routing' => 'Nette\\Bridges\\ApplicationDI\\RoutingExtension',
+			'session' => 'Nette\\Bridges\\HttpDI\\SessionExtension',
 			'ext1' => 'Adeira\\Tests\\CustomExtension1',
 			'ext2' => 'Adeira\\Tests\\CustomExtension2',
 			'ext3' => 'Adeira\\Tests\\ExtensionEmptyConfig',
+			'inject' => 'Nette\\DI\\Extensions\\InjectExtension',
 		], array_map(function ($item) {
 			return get_class($item);
-		}, $this->extension->getExtensions()));
+		}, $this->compiler->getExtensions()));
 
 		/** @var CustomExtension2 $extension */
-		$extension = $this->extension->getExtensions('Adeira\Tests\CustomExtension2')['ext2'];
+		$extension = $this->compiler->getExtensions('Adeira\Tests\CustomExtension2')['ext2'];
 		Assert::same([
 			'ek1' => 'ev1',
 			'ek2' => 'overridden',
@@ -94,16 +107,22 @@ class CompilerExtension extends \Tester\TestCase
 
 	public function testAddConfigServices()
 	{
-		$builder = $this->extension->getContainerBuilder();
+		$builder = $this->compiler->getContainerBuilder();
 		Assert::same([
 			'Nette\\Application\\Application',
 			'Nette\\Application\\PresenterFactory',
 			'Nette\\Application\\LinkGenerator',
-			'Nette\\Application\\Routers\\RouteList',
+			'Nette\\Caching\\Storages\\SQLiteJournal',
+			'Nette\\Caching\\Storages\\FileStorage',
 			'Nette\\Http\\RequestFactory',
 			['@http.requestFactory', 'createHttpRequest'],
 			'Nette\\Http\\Response',
 			'Nette\\Http\\Context',
+			'Latte\\Engine',
+			'Nette\\Bridges\\ApplicationLatte\\TemplateFactory',
+			'Nette\\Application\\Routers\\RouteList',
+			'Nette\\Http\\Session',
+			'Adeira\\Tests\\Definition',
 			'Adeira\\Tests\\Service2', //overridden (named service)
 			'Adeira\\Tests\\Service4', //registered in config.neon
 			'Adeira\\Tests\\Service5', //registered later in extension
@@ -126,7 +145,7 @@ class CompilerExtension extends \Tester\TestCase
 		$reflectionProperty = $reflectionClass->getProperty('mapping');
 		$reflectionProperty->setAccessible(TRUE);
 		Assert::same([
-			'*' => ['', '*Module\\', '*'],
+			'*' => ['a\\', '*b\\', '*c'],
 			'Nette' => ['NetteModule\\', '*\\', '*Presenter'],
 			'Module' => ['App\\', '*Module\\', 'Controllers\\*Controller'],
 		], $reflectionProperty->getValue($presenterFactory));
@@ -134,9 +153,11 @@ class CompilerExtension extends \Tester\TestCase
 
 	public function testReloadDefinition()
 	{
-		Assert::exception(function () {
-			$this->extension->reloadDefinition(1);
-		}, \Nette\InvalidArgumentException::class, 'Definition regex should be string name or array od string names.');
+		Assert::error(function () {
+			/** @var \Adeira\Tests\CustomExtension1 $extension */
+			$extension = $this->compiler->getExtensions('Adeira\Tests\CustomExtension1')['ext1'];
+			$extension->reloadDefinition(1);
+		}, E_USER_DEPRECATED, 'Adeira\CompilerExtension::reloadDefinition is deprecated. This should be fully automatic now. Just remove it and you are ready to go.');
 	}
 
 }
