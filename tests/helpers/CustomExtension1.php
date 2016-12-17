@@ -42,9 +42,4 @@ CONFIG;
 		return $this->compiler->getExtensions($type);
 	}
 
-	public function reloadDefinition($regex)
-	{
-		parent::reloadDefinition($regex);
-	}
-
 }

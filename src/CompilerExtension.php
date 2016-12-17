@@ -48,14 +48,6 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 		$builder->getDefinition($presenterFactory)->addSetup('setMapping', [$mapping]);
 	}
 
-	/**
-	 * @deprecated
-	 */
-	protected function reloadDefinition($regex)
-	{
-		trigger_error(__METHOD__ . ' is deprecated. This should be fully automatic now. Just remove it and you are ready to go.', E_USER_DEPRECATED);
-	}
-
 	private function processExtensions($config)
 	{
 		$extensions = $this->compiler->getExtensions();

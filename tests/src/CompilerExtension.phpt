@@ -151,15 +151,6 @@ class CompilerExtension extends \Tester\TestCase
 		], $reflectionProperty->getValue($presenterFactory));
 	}
 
-	public function testReloadDefinition()
-	{
-		Assert::error(function () {
-			/** @var \Adeira\Tests\CustomExtension1 $extension */
-			$extension = $this->compiler->getExtensions('Adeira\Tests\CustomExtension1')['ext1'];
-			$extension->reloadDefinition(1);
-		}, E_USER_DEPRECATED, 'Adeira\CompilerExtension::reloadDefinition is deprecated. This should be fully automatic now. Just remove it and you are ready to go.');
-	}
-
 }
 
 (new CompilerExtension)->run();
