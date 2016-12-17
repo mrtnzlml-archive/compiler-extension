@@ -16,7 +16,7 @@ class CompilerExtension extends \Nette\DI\CompilerExtension
 	 */
 	protected function addConfig($configFile)
 	{
-		trigger_error(__METHOD__ . ' is deprecated');
+		trigger_error(__METHOD__ . ' is deprecated. Use ' . \Adeira\ConfigurableExtensionsExtension::class . ' instead.');
 		return $this->loadFromFile($configFile);
 	}
 

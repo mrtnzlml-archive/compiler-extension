@@ -32,7 +32,7 @@ class DeprecatedAddConfig extends \Tester\TestCase
 				//empty mock
 			}, 'compiler');
 			$extension->loadConfiguration();
-		}, E_USER_NOTICE);
+		}, E_USER_NOTICE, 'Adeira\CompilerExtension::addConfig is deprecated. Use Adeira\ConfigurableExtensionsExtension instead.');
 	}
 
 }
