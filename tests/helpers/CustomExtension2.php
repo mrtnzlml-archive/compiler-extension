@@ -2,8 +2,21 @@
 
 namespace Adeira\Tests;
 
-class CustomExtension2 extends \Adeira\CompilerExtension
+use Tester\FileMock;
+
+class CustomExtension2 extends \Nette\DI\CompilerExtension
 {
+
+	public function provideConfig()
+	{
+		$config = <<<NEON
+ext1:
+	commands:
+		- 'com1_ext2'
+		- 'com2_ext2'
+NEON;
+		return FileMock::create($config, 'neon');
+	}
 
 	public function loadConfiguration()
 	{

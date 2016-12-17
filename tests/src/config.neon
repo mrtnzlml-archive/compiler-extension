@@ -10,11 +10,16 @@ extensions:
 	ext1: Adeira\Tests\CustomExtension1
 	ext2: Adeira\Tests\CustomExtension2
 	ext3: Adeira\Tests\ExtensionEmptyConfig
+	ext4: Adeira\Tests\CustomExtension4
 
 ext1:
 	numericExtensionParameter: 159753
 	falseExtensionParameter: no
 	nullExtensionParameter: NULL
+	commands:
+		- 'com1_ext1'
+		- 'com2_ext1'
+		- 'com3_ext1'
 
 ext2:
 	ek1: ev1

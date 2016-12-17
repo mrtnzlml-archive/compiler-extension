@@ -25,6 +25,7 @@ class CompilerExtension extends \Tester\TestCase
 		Tester\Helpers::purge($tempDir = __DIR__ . '/../temp/thread_' . getenv(Tester\Environment::THREAD));
 
 		$configurator = new Nette\Configurator;
+		$configurator->defaultExtensions['extensions'] = \Adeira\ConfigurableExtensionsExtension::class;
 		$configurator->setTempDirectory($tempDir);
 		$configurator->addConfig(__DIR__ . '/config.neon');
 		$configurator->onCompile[] = function (Nette\Configurator $sender, Nette\DI\Compiler $compiler) {
@@ -70,7 +71,7 @@ class CompilerExtension extends \Tester\TestCase
 		Assert::same([
 			'php' => 'Nette\\DI\\Extensions\\PhpExtension',
 			'constants' => 'Nette\\DI\\Extensions\\ConstantsExtension',
-			'extensions' => 'Nette\\DI\\Extensions\\ExtensionsExtension',
+			'extensions' => 'Adeira\\ConfigurableExtensionsExtension',
 			'application' => 'Nette\\Bridges\\ApplicationDI\\ApplicationExtension',
 			'decorator' => 'Nette\\DI\\Extensions\\DecoratorExtension',
 			'cache' => 'Nette\\Bridges\\CacheDI\\CacheExtension',
@@ -82,6 +83,7 @@ class CompilerExtension extends \Tester\TestCase
 			'ext1' => 'Adeira\\Tests\\CustomExtension1',
 			'ext2' => 'Adeira\\Tests\\CustomExtension2',
 			'ext3' => 'Adeira\\Tests\\ExtensionEmptyConfig',
+			'ext4' => 'Adeira\\Tests\\CustomExtension4',
 			'inject' => 'Nette\\DI\\Extensions\\InjectExtension',
 		], array_map(function ($item) {
 			return get_class($item);
@@ -94,15 +96,6 @@ class CompilerExtension extends \Tester\TestCase
 			'ek2' => 'overridden',
 			'ek3' => 'ev3',
 		], $extension->getConfig());
-	}
-
-	public function testReplaceUnknownExtensionParameter()
-	{
-		$compiler = new \Nette\DI\Compiler;
-		$compiler->addExtension('ext3', new \Adeira\Tests\CustomExtension3);
-		Assert::throws(function () use ($compiler) {
-			$compiler->compile();
-		}, \OutOfRangeException::class, 'Cannot replace %%%%thisExtensionParameterDoesNotExist%%%% because parameter does not exist.');
 	}
 
 	public function testAddConfigServices()
@@ -122,6 +115,7 @@ class CompilerExtension extends \Tester\TestCase
 			'Nette\\Bridges\\ApplicationLatte\\TemplateFactory',
 			'Nette\\Application\\Routers\\RouteList',
 			'Nette\\Http\\Session',
+			'Adeira\\Tests\\CommandsStack',
 			'Adeira\\Tests\\Definition',
 			'Adeira\\Tests\\Service2', //overridden (named service)
 			'Adeira\\Tests\\Service4', //registered in config.neon
@@ -149,6 +143,18 @@ class CompilerExtension extends \Tester\TestCase
 			'Nette' => ['NetteModule\\', '*\\', '*Presenter'],
 			'Module' => ['App\\', '*Module\\', 'Controllers\\*Controller'],
 		], $reflectionProperty->getValue($presenterFactory));
+	}
+
+	public function testRegisteredCommands()
+	{
+		$stack = $this->generatedContainer->getService('ext1.commands.stack');
+		Assert::same([
+			'com1_ext1',
+			'com2_ext1',
+			'com3_ext1',
+			'com1_ext2',
+			'com2_ext2',
+		], $stack->commands);
 	}
 
 }

@@ -7,7 +7,7 @@ use Tester\FileMock;
 class CustomExtension1 extends \Adeira\CompilerExtension
 {
 
-	public function loadConfiguration()
+	public function provideConfig()
 	{
 		$config = <<<CONFIG
 parameters:
@@ -29,7 +29,18 @@ latte:
 	macros:
 		- Adeira\Tests\FakeLatteMacro
 CONFIG;
-		$this->addConfig(FileMock::create($config, 'neon'));
+		return FileMock::create($config, 'neon');
+	}
+
+	public function loadConfiguration()
+	{
+		$builder = $this->getContainerBuilder();
+		$builder->addDefinition($this->prefix('commands.stack'))
+			->setClass(\Adeira\Tests\CommandsStack::class)
+			->addSetup('?->addCommands(?)', [
+				'@self',
+				$this->config['commands'],
+			]);
 	}
 
 	public function beforeCompile()

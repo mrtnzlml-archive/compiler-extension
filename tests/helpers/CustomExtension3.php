@@ -4,16 +4,18 @@ namespace Adeira\Tests;
 
 use Tester\FileMock;
 
-class CustomExtension3 extends \Adeira\CompilerExtension
+class CustomExtension3 extends \Nette\DI\CompilerExtension
 {
 
-	public function loadConfiguration()
+	public function provideConfig()
 	{
 		$config = <<<CONFIG
 services:
 	- Adeira\Tests\Service3('a', %%thisExtensionParameterDoesNotExist%%, 'c')
+
+thisDoesntExist: true
 CONFIG;
-		$this->addConfig(FileMock::create($config, 'neon'));
+		return FileMock::create($config, 'neon');
 	}
 
 }

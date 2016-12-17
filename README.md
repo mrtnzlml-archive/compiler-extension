@@ -2,30 +2,36 @@
 
 [![Build Status](https://travis-ci.org/adeira/compiler-extension.svg?branch=master)](https://travis-ci.org/adeira/compiler-extension)
 
-If you have more complicated project structure with a lot of bundles (DIC extensions), it's very common that you have to setup a lot of thinks and it may be quite difficult. But not with this `CompilerExtension`:
+If you have more complicated project structure with a lot of bundles (DIC extensions), it's very common that you have to setup a lot of things and it may be quite difficult. But not with this extension. All you need is to use `Adeira\ConfigurableExtensionsExtension` instead of default `ExtensionsExtension` like this (probably in `bootstrap.php`):
+
+```php
+$configurator->defaultExtensions['extensions'] = \Adeira\ConfigurableExtensionsExtension::class;
+```
+
+This new extension will take care of configuration files in your bundles. Next if you want to use custom config for extension, just use `provideConfig` method:
 
 ```php
 <?php
 
-namespace Ant\Articles\DI;
+namespace App\Articles\DI;
 
 class ArticlesExtension extends \Adeira\CompilerExtension
 {
 
-	public function loadConfiguration()
+	public function provideConfig()
 	{
-		$this->addConfig(__DIR__ . '/config.neon');
+		return __DIR__ . '/config.neon';
 	}
 
 	public function beforeCompile()
 	{
-		$this->setMapping(['Articles' => 'Ant\Articles\*Module\Presenters\*Presenter']);
+		$this->setMapping(['Articles' => 'App\Articles\*Module\Presenters\*Presenter']);
 	}
 
 }
 ```
 
-There are two main helpers - `addConfig()` and `setMapping()`. Second helper is quite straightforward. It just setup custom presenter mapping. `addConfig()` is much more interesting. Imagine you have this config in your application (added in bootstrap via `Nette\DI\Compiler::addConfig`):
+You don't have to extend `Adeira\CompilerExtension` but there is useful helper `setMapping()` (it just setups custom presenter mapping). But `provideConfig` metod will work with `Nette\DI\CompilerExtension` descendants as well. **And why is this so interesting?** Imagine you have this config in your application (added in bootstrap via `Nette\DI\Compiler::addConfig`):
 
 ```
 parameters:
@@ -48,7 +54,7 @@ application:
 		*: *
 ```
 
-And now you'll add another config in your DIC extension using `Adeira\CompilerExtension::addConfig`:
+And now you'll add another config in your DIC extension using `provideConfig` method:
 
 ```
 parameters:
@@ -65,7 +71,7 @@ ext2:
 
 latte:
 	macros:
-		- Ant\Grid\Latte\Macros
+		- App\Grid\Latte\Macros
 ```
 
 What is the result? Now there are three global parameters:
@@ -101,6 +107,4 @@ services:
 	- Tests\TestService(%%ext_key2%%)
 ```
 
-Remember that this is possible only if you are using custom config added by `Adeira\CompilerExtension::addConfig` method. It will not work in configs added in bootstrap file (via `Nette\DI\Compiler::addConfig`). This is because only under extension it's possible to get key from the right extension section (`ext2.ext_key2` in this case).
-
-You can also play with other extensions (`latte` in this example). This is however the most problematic part, because it's needed to remove definitions and aliases from DIC, but it's not easy to figure out which one. This library is trying to figure out what to do, but it's not silver bullet. However you can specify regular expression of service names to be reloaded using `\Adeira\CompilerExtension::reloadDefinition()` method.
+Remember that this is possible only if you are using custom config added by `provideConfig` method. It will not work in configs added in bootstrap file (via `Nette\DI\Compiler::addConfig`). This is because only under extension it's possible to get key from the right extension section (`ext2.ext_key2` in this case).
