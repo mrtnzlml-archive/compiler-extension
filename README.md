@@ -33,7 +33,7 @@ class ArticlesExtension extends \Adeira\CompilerExtension
 
 You don't have to extend `Adeira\CompilerExtension` but there is useful helper `setMapping()` (it just setups custom presenter mapping). But `provideConfig` metod will work with `Nette\DI\CompilerExtension` descendants as well. **And why is this so interesting?** Imagine you have this config in your application (added in bootstrap via `Nette\DI\Compiler::addConfig`):
 
-```
+```yaml
 parameters:
 	key1: value1
 	key2: value2
@@ -56,7 +56,7 @@ application:
 
 And now you'll add another config in your DIC extension using `provideConfig` method:
 
-```
+```yaml
 parameters:
 	key2: overridden
 	key3: value3
@@ -76,7 +76,7 @@ latte:
 
 What is the result? Now there are three global parameters:
 
-```
+```yaml
 parameters:
   key1: value1
   key2: overridden
@@ -85,7 +85,7 @@ parameters:
 
 As you can see your custom DIC extension has priority. Extensions parameters (`ext2`) behaves exactly the same. What about services? As you can expect there will be three services:
 
-```
+```yaml
 - DefaultService
 named: Service2
 - Tests\TestService
@@ -93,7 +93,7 @@ named: Service2
 
 And here comes the most interesting part. If you have a lot of extensions it's good idea to use custom config files (it's simple and easy to understand). But it may be hard to get extension configuration from neon file. In `Nette\DI\CompilerExtension` descendant class you could do simply `$this->getConfig()` to get configuration related to the extension, but there is no equivalent for doing this in neon. This extension adds special syntax for this case. From the previous examples there are three options related to the `ext2` extension:
 
-```
+```yaml
 ext2:
 	ext_key1: ext_value1
 	ext_key2: overridden
@@ -102,7 +102,7 @@ ext2:
 
 To get second parameter into service use this:
 
-```
+```yaml
 services:
 	- Tests\TestService(%%ext_key2%%)
 ```
