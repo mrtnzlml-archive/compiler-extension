@@ -14,7 +14,7 @@ parameters:
 	k2: overridden
 	k3: v3
 services:
-	- Adeira\Tests\Service3(@named(), %%numericExtensionParameter%%, '%%')
+	- Adeira\Tests\Service3(@named(), %%numericExtensionParameter%%, '%%', %%arrayKey.arrayValue%%)
 	- implement: Adeira\Tests\IService5Factory
 	  arguments:
 	  	- test

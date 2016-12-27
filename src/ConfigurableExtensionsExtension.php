@@ -50,42 +50,75 @@ class ConfigurableExtensionsExtension extends \Nette\DI\Extensions\ExtensionsExt
 	 * Expands %%variables%% in extensions scope.
 	 *
 	 * @throws \Nette\OutOfRangeException
-	 * @throws \Adeira\CannotBeReplacedException
+	 * @throws \Nette\InvalidArgumentException
 	 */
 	private function expandExtensionParametersInServices($services, array $config)
 	{
-		$replacePlaceholder = function ($stringWithPlaceholder) use ($config) {
-			if (is_string($stringWithPlaceholder) && preg_match('~%%([^,)]+)%%~', $stringWithPlaceholder, $matches)) {
-				$parameterName = $matches[1];
-				if (!array_key_exists($parameterName, $config)) {
-					throw new \OutOfRangeException("Cannot replace %%$parameterName%% because parameter does not exist.");
-				}
-				return $config[$parameterName];
+		return self::expand($services, $config, TRUE);
+	}
+
+	/**
+	 * Expands %%placeholders%%
+	 *
+	 * @return mixed
+	 *
+	 * @throws Nette\InvalidArgumentException
+	 * @throws Nette\OutOfRangeException
+	 *
+	 * This is basically copy of \Nette\DI\Helpers::expand
+	 */
+	public static function expand($var, array $params, $recursive = FALSE)
+	{
+		if (is_array($var)) {
+			$res = [];
+			foreach ($var as $key => $val) {
+				$res[$key] = self::expand($val, $params, $recursive);
 			}
-			throw new \Adeira\CannotBeReplacedException;
-		};
-		foreach ($services as $serviceName => &$def) {
-			if ($def instanceof \Nette\DI\Statement) {
-				foreach ($def->arguments as &$argumentRef) {
-					try {
-						$argumentRef = $replacePlaceholder($argumentRef);
-					} catch (\Adeira\CannotBeReplacedException $exc) {
-						//never mind
-					}
+			return $res;
+		} elseif ($var instanceof Nette\DI\Statement) {
+			return new Nette\DI\Statement(
+				self::expand($var->getEntity(), $params, $recursive),
+				self::expand($var->arguments, $params, $recursive)
+			);
+		} elseif (!is_string($var)) {
+			return $var;
+		}
+
+		$parts = preg_split('#%%([\w.-]*)%%#i', $var, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$res = '';
+		foreach ($parts as $n => $part) {
+			if ($n % 2 === 0) {
+				$res .= $part;
+			} elseif ($part === '') {
+				$res .= '%';
+			} elseif (isset($recursive[$part])) {
+				throw new \Nette\InvalidArgumentException(
+					sprintf('Circular reference detected for variables: %s.', implode(', ', array_keys($recursive)))
+				);
+			} else {
+				try {
+					$val = Nette\Utils\Arrays::get($params, explode('.', $part));
+				} catch (\Nette\InvalidArgumentException $exc) {
+					//FIXME: OutOfRangeException only because of BC
+					throw new \Nette\OutOfRangeException(
+						"Cannot replace %%$part%% because parameter does not exist.",
+						0,
+						$exc
+					);
 				}
-			} elseif (is_array($def) && array_key_exists('arguments', $def)) {
-				$replacedArguments = $def['arguments'];
-				foreach ($def['arguments'] as $key => $argument) {
-					try {
-						$replacedArguments[$key] = $replacePlaceholder($argument);
-					} catch (\Adeira\CannotBeReplacedException $exc) {
-						//never mind
-					}
+				if ($recursive) {
+					$val = self::expand($val, $params, (is_array($recursive) ? $recursive : []) + [$part => 1]);
 				}
-				$def['arguments'] = $replacedArguments;
+				if (strlen($part) + 4 === strlen($var)) {
+					return $val;
+				}
+				if (!is_scalar($val) && $val !== NULL) {
+					throw new \Nette\InvalidArgumentException("Unable to concatenate non-scalar parameter '$part' into '$var'.");
+				}
+				$res .= $val;
 			}
 		}
-		return $services;
+		return $res;
 	}
 
 }

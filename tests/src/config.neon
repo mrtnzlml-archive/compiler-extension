@@ -16,6 +16,8 @@ ext1:
 	numericExtensionParameter: 159753
 	falseExtensionParameter: no
 	nullExtensionParameter: NULL
+	arrayKey:
+		arrayValue: kv
 	commands:
 		- 'com1_ext1'
 		- 'com2_ext1'
