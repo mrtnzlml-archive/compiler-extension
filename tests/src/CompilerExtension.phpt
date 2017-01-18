@@ -22,7 +22,11 @@ class CompilerExtension extends \Tester\TestCase
 
 	public function setUp()
 	{
-		Tester\Helpers::purge($tempDir = __DIR__ . '/../temp/thread_' . getenv(Tester\Environment::THREAD));
+		$tempDir = __DIR__ . '/../temp';
+		if (!is_dir($tempDir)) {
+			mkdir($tempDir);
+		}
+		Tester\Helpers::purge($tempDir = $tempDir . '/thread_' . getenv(Tester\Environment::THREAD));
 
 		$configurator = new Nette\Configurator;
 		$configurator->defaultExtensions['extensions'] = \Adeira\ConfigurableExtensionsExtension::class;
