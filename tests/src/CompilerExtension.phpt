@@ -25,7 +25,13 @@ class CompilerExtension extends \Tester\TestCase
 		Tester\Helpers::purge($tempDir = __DIR__ . '/../temp/thread_' . getenv(Tester\Environment::THREAD));
 
 		$configurator = new Nette\Configurator;
-		$configurator->defaultExtensions['extensions'] = \Adeira\ConfigurableExtensionsExtension::class;
+		$configurator->defaultExtensions = [
+			'extensions' => \Adeira\ConfigurableExtensionsExtension::class,
+			'application' => [Nette\Bridges\ApplicationDI\ApplicationExtension::class, ['%debugMode%', ['%appDir%'], '%tempDir%/cache']],
+			'http' => [Nette\Bridges\HttpDI\HttpExtension::class, ['%consoleMode%']],
+			'latte' => [Nette\Bridges\ApplicationDI\LatteExtension::class, ['%tempDir%/cache/latte', '%debugMode%']],
+			'routing' => [Nette\Bridges\ApplicationDI\RoutingExtension::class, ['%debugMode%']],
+		];
 		$configurator->setTempDirectory($tempDir);
 		$configurator->addConfig(__DIR__ . '/config.neon');
 		$configurator->onCompile[] = function (Nette\Configurator $sender, Nette\DI\Compiler $compiler) {
@@ -69,22 +75,15 @@ class CompilerExtension extends \Tester\TestCase
 	public function testAddConfigExtensions()
 	{
 		Assert::same([
-			'php' => 'Nette\\DI\\Extensions\\PhpExtension',
-			'constants' => 'Nette\\DI\\Extensions\\ConstantsExtension',
 			'extensions' => 'Adeira\\ConfigurableExtensionsExtension',
 			'application' => 'Nette\\Bridges\\ApplicationDI\\ApplicationExtension',
-			'decorator' => 'Nette\\DI\\Extensions\\DecoratorExtension',
-			'cache' => 'Nette\\Bridges\\CacheDI\\CacheExtension',
-			'di' => 'Nette\\DI\\Extensions\\DIExtension',
 			'http' => 'Nette\\Bridges\\HttpDI\\HttpExtension',
 			'latte' => 'Nette\\Bridges\\ApplicationDI\\LatteExtension',
 			'routing' => 'Nette\\Bridges\\ApplicationDI\\RoutingExtension',
-			'session' => 'Nette\\Bridges\\HttpDI\\SessionExtension',
 			'ext1' => 'Adeira\\Tests\\CustomExtension1',
 			'ext2' => 'Adeira\\Tests\\CustomExtension2',
 			'ext3' => 'Adeira\\Tests\\ExtensionEmptyConfig',
 			'ext4' => 'Adeira\\Tests\\CustomExtension4',
-			'inject' => 'Nette\\DI\\Extensions\\InjectExtension',
 		], array_map(function ($item) {
 			return get_class($item);
 		}, $this->compiler->getExtensions()));
@@ -105,8 +104,6 @@ class CompilerExtension extends \Tester\TestCase
 			'Nette\\Application\\Application',
 			'Nette\\Application\\PresenterFactory',
 			'Nette\\Application\\LinkGenerator',
-			'Nette\\Caching\\Storages\\SQLiteJournal',
-			'Nette\\Caching\\Storages\\FileStorage',
 			'Nette\\Http\\RequestFactory',
 			['@http.requestFactory', 'createHttpRequest'],
 			'Nette\\Http\\Response',
@@ -114,15 +111,12 @@ class CompilerExtension extends \Tester\TestCase
 			'Latte\\Engine',
 			'Nette\\Bridges\\ApplicationLatte\\TemplateFactory',
 			'Nette\\Application\\Routers\\RouteList',
-			'Nette\\Http\\Session',
 			'Adeira\\Tests\\CommandsStack',
 			'Adeira\\Tests\\Definition',
 			'Adeira\\Tests\\Service2', //overridden (named service)
 			'Adeira\\Tests\\Service4', //registered in config.neon
 			'Adeira\\Tests\\Service5', //registered later in extension
 			'Adeira\\Tests\\Service3', //registered later in extension
-			'NetteModule\\ErrorPresenter',
-			'NetteModule\\MicroPresenter',
 			'Nette\\DI\\Container',
 		], array_map(function (\Nette\DI\ServiceDefinition $item) {
 			return $item->getFactory()->getEntity();

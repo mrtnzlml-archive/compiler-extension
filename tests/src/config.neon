@@ -29,5 +29,6 @@ ext2:
 
 application:
 	scanDirs: no
+	scanComposer: no
 	mapping:
 		*: a\*b\*c
