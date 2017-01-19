@@ -10,7 +10,7 @@
   "require-dev": {
     "latte/latte": "^2.4",
     "nette/bootstrap": "^2.4",
-    "nette/tester": "2.0.x-dev as v1.7"
+    "nette/tester": "dev-master"
   },
   "autoload": {
     "psr-4": {
