@@ -3,11 +3,11 @@
   "license": "MIT",
   "require": {
     "php": "^7.0",
-    "adeira/code-quality": "^1.0",
     "nette/application": "^2.4",
     "nette/di": "^2.4"
   },
   "require-dev": {
+    "adeira/code-quality": "^1.0",
     "latte/latte": "^2.4",
     "nette/bootstrap": "^2.4",
     "nette/tester": "dev-master"
