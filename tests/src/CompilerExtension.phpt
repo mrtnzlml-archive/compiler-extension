@@ -26,7 +26,7 @@ class CompilerExtension extends \Tester\TestCase
 
 		$configurator = new Nette\Configurator;
 		$configurator->defaultExtensions = [
-			'extensions' => \Adeira\ConfigurableExtensionsExtension::class,
+			'extensions' => [\Adeira\ConfigurableExtensionsExtension::class, [TRUE]],
 			'application' => [Nette\Bridges\ApplicationDI\ApplicationExtension::class, ['%debugMode%', ['%appDir%'], '%tempDir%/cache']],
 			'http' => [Nette\Bridges\HttpDI\HttpExtension::class, ['%consoleMode%']],
 			'latte' => [Nette\Bridges\ApplicationDI\LatteExtension::class, ['%tempDir%/cache/latte', '%debugMode%']],

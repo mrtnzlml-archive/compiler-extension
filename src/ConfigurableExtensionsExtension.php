@@ -7,6 +7,24 @@ use Nette;
 class ConfigurableExtensionsExtension extends \Nette\DI\Extensions\ExtensionsExtension
 {
 
+	private $experimental;
+
+	public function __construct($experimental = FALSE)
+	{
+		$this->experimental = $experimental;
+	}
+
+	public function loadFromFile($file)
+	{
+		$loader = new \Nette\DI\Config\Loader;
+		if ($this->experimental === TRUE) {
+			$loader->addAdapter('neon', GroupedNeonAdapter::class);
+		}
+		$res = $loader->load($file);
+		$this->compiler->addDependencies($loader->getDependencies());
+		return $res;
+	}
+
 	public function loadConfiguration()
 	{
 		$ceeConfig = $this->getConfig(); // configuration of this extension (list of extensions)

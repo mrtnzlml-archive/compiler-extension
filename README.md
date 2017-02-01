@@ -108,3 +108,36 @@ services:
 ```
 
 Remember that this is possible only if you are using custom config added by `provideConfig` method. It will not work in configs added in bootstrap file (via `Nette\DI\Compiler::addConfig`). This is because only under extension it's possible to get key from the right extension section (`ext2.ext_key2` in this case).
+
+### Experimental features
+These features are not enabled by default now (but may be enabled by default in the future). To enable experimental features now you have to register this extension differently:
+
+```php
+ $configurator->defaultExtensions['extensions'] = [\Adeira\ConfigurableExtensionsExtension::class, [TRUE]]; // Become superhero!
+```
+
+At this moment there is so called `GroupedNeonAdapter`. It allows you to write service definitions in NEON with grouped syntax. Before:
+
+```php
+graphql:
+	types:
+		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationRecordType
+		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationsConnectionType
+		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationsEdgeType
+		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationType
+```
+
+After:
+
+```php
+graphql:
+	types:
+		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\( # namespace must end with backslash
+			WeatherStationRecordType
+			WeatherStationsConnectionType
+			WeatherStationsEdgeType
+			WeatherStationType
+		)
+```
+
+This feature is optional and works only in NEON files provided via `provideConfig` method. All classes must be registered anonymously. If it's not possible just don't use this feature.
