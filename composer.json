@@ -7,10 +7,11 @@
     "nette/di": "^2.4"
   },
   "require-dev": {
-    "adeira/code-quality": "^1.0",
+    "jakub-onderka/php-parallel-lint": "^0.9.2",
     "latte/latte": "^2.4",
     "nette/bootstrap": "^2.4",
-    "nette/tester": "dev-master"
+    "nette/tester": "dev-master",
+    "slevomat/coding-standard": "dev-php7"
   },
   "autoload": {
     "psr-4": {

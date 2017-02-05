@@ -1,4 +1,60 @@
 <?xml version="1.0"?>
-<ruleset>
-	<rule ref="./vendor/adeira/code-quality/ruleset.xml"/>
+<ruleset name="adeira/code-quality">
+	<description>Source of code quality rules for Adeira packages</description>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/> <!-- $array = []; -->
+	<rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+	<rule ref="Generic.CodeAnalysis.JumbledIncrementer"/>
+	<rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
+	<rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
+	<rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
+	<!--<rule ref="Generic.Commenting.Todo"/>-->
+	<rule ref="Generic.ControlStructures.InlineControlStructure"/>
+	<rule ref="Generic.Files.ByteOrderMark"/>
+	<rule ref="Generic.Files.EndFileNewline"/>
+	<rule ref="Generic.Files.LineLength">
+		<properties>
+			<property name="lineLimit" value="160"/>
+			<property name="absoluteLineLimit" value="160"/>
+		</properties>
+	</rule>
+	<rule ref="Generic.Files.OneClassPerFile"/>
+	<rule ref="Generic.Files.OneInterfacePerFile"/>
+	<rule ref="Generic.Files.OneTraitPerFile"/>
+	<rule ref="Generic.Formatting.DisallowMultipleStatements"/>
+	<rule ref="Generic.Formatting.NoSpaceAfterCast"/>
+	<rule ref="Generic.Metrics.CyclomaticComplexity"/>
+	<rule ref="Generic.Metrics.NestingLevel">
+		<properties>
+			<property name="nestingLevel" value="7"/>
+		</properties>
+	</rule>
+	<rule ref="Generic.NamingConventions.ConstructorName"/>
+	<rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+	<rule ref="Generic.PHP.BacktickOperator"/>
+	<rule ref="Generic.PHP.DisallowShortOpenTag"/>
+	<rule ref="Generic.PHP.SAPIUsage"/>
+	<rule ref="Generic.PHP.UpperCaseConstant"/> <!-- TRUE, FALSE, NULL -->
+	<rule ref="Generic.Strings.UnnecessaryStringConcat"/>
+	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/> <!-- tabs only -->
+
+	<rule ref="PSR2.ControlStructures.ElseIfDeclaration"/>
+	<rule ref="PSR2.Files.ClosingTag"/>
+	<rule ref="PSR2.Methods.MethodDeclaration"/>
+	<rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
+
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Arrays/TrailingArrayCommaSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Classes/UnusedPrivateElementsSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/ControlStructures/AssignmentInConditionSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/ControlStructures/YodaComparisonSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Exceptions/ReferenceThrowableOnlySniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Namespaces/AlphabeticallySortedUsesSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Namespaces/FullyQualifiedExceptionsSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Namespaces/UseDoesNotStartWithBackslashSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Namespaces/UseFromSameNamespaceSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Typehints/DeclareStrictTypesSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Typehints/ReturnTypehintSpacingSniff.php"/>
+	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Types/EmptyLinesAroundTypeBracesSniff.php"/>
+
 </ruleset>
