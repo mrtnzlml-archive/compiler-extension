@@ -32,8 +32,8 @@ NEON;
 						return FileMock::create($config, 'neon');
 					}
 
-				}
-			]
+				},
+			],
 		]);
 		Assert::exception(function () use ($compiler) {
 			$compiler->compile();
