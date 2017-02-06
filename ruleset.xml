@@ -24,7 +24,11 @@
 	<rule ref="Generic.Files.OneTraitPerFile"/>
 	<rule ref="Generic.Formatting.DisallowMultipleStatements"/>
 	<rule ref="Generic.Formatting.NoSpaceAfterCast"/>
-	<rule ref="Generic.Metrics.CyclomaticComplexity"/>
+	<rule ref="Generic.Metrics.CyclomaticComplexity">
+		<properties>
+			<property name="complexity" value="15"/>
+		</properties>
+	</rule>
 	<rule ref="Generic.Metrics.NestingLevel">
 		<properties>
 			<property name="nestingLevel" value="7"/>
