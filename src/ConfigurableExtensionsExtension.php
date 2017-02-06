@@ -44,13 +44,23 @@ class ConfigurableExtensionsExtension extends \Nette\DI\Extensions\ExtensionsExt
 			}
 
 			if ($extensionConfigFile) {
+				$extensionsExtensions = array_keys($this->compiler->getExtensions(\Nette\DI\Extensions\ExtensionsExtension::class));
 				$extensionConfig = $this->loadFromFile($extensionConfigFile); //TODO: addConfig jako pole + pole konfiguračních souborů
+
+				foreach ($extensionsExtensions as $originalExtensionsExtensionName) {
+					if (array_key_exists($originalExtensionsExtensionName, $extensionConfig)) {
+						// TODO: maybe allow original extensions manipulation (?)
+						throw new \Nette\NotSupportedException('You cannot manipulate original extensions. This operation is not supported.');
+					}
+				}
+
 				if (isset($extensionConfig['parameters'])) {
 					$builder->parameters = \Nette\DI\Config\Helpers::merge(
 						\Nette\DI\Helpers::expand($extensionConfig['parameters'], $extensionConfig['parameters'], TRUE),
 						$builder->parameters
 					);
 				}
+
 				if (isset($extensionConfig['services'])) {
 					$services = $this->expandExtensionParametersInServices(
 						$extensionConfig['services'],
@@ -58,6 +68,7 @@ class ConfigurableExtensionsExtension extends \Nette\DI\Extensions\ExtensionsExt
 					);
 					$extensionConfig['services'] = $services;
 				}
+
 				$this->compiler->addConfig($extensionConfig);
 			}
 			//TODO: exception když se snažím konfigurovat něco co neexistuje (?)
