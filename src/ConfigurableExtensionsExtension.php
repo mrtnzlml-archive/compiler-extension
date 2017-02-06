@@ -45,7 +45,15 @@ class ConfigurableExtensionsExtension extends \Nette\DI\Extensions\ExtensionsExt
 
 			if ($extensionConfigFile) {
 				$extensionsExtensions = array_keys($this->compiler->getExtensions(\Nette\DI\Extensions\ExtensionsExtension::class));
-				$extensionConfig = $this->loadFromFile($extensionConfigFile); //TODO: addConfig jako pole + pole konfiguračních souborů
+
+				if (is_array($extensionConfigFile)) {
+					$extensionConfig = $extensionConfigFile;
+				} elseif (is_file($extensionConfigFile)) {
+					$extensionConfig = $this->loadFromFile($extensionConfigFile);
+				} else {
+					$type = gettype($extensionConfigFile);
+					throw new \Nette\UnexpectedValueException("Method 'provideConfig' should return file name or array with configuration but '$type' given.");
+				}
 
 				foreach ($extensionsExtensions as $originalExtensionsExtensionName) {
 					if (array_key_exists($originalExtensionsExtensionName, $extensionConfig)) {
@@ -71,7 +79,6 @@ class ConfigurableExtensionsExtension extends \Nette\DI\Extensions\ExtensionsExt
 
 				$this->compiler->addConfig($extensionConfig);
 			}
-			//TODO: exception když se snažím konfigurovat něco co neexistuje (?)
 		}
 	}
 
