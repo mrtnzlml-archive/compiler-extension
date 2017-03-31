@@ -18,15 +18,15 @@ namespace App\Articles\DI;
 class ArticlesExtension extends \Adeira\CompilerExtension
 {
 
-	public function provideConfig()
-	{
-		return __DIR__ . '/config.neon';
-	}
+  public function provideConfig()
+  {
+    return __DIR__ . '/config.neon';
+  }
 
-	public function beforeCompile()
-	{
-		$this->setMapping(['Articles' => 'App\Articles\*Module\Presenters\*Presenter']);
-	}
+  public function beforeCompile()
+  {
+    $this->setMapping(['Articles' => 'App\Articles\*Module\Presenters\*Presenter']);
+  }
 
 }
 ```
@@ -35,43 +35,43 @@ You don't have to extend `Adeira\CompilerExtension` but there is useful helper `
 
 ```yaml
 parameters:
-	key1: value1
-	key2: value2
+  key1: value1
+  key2: value2
 
 services:
-	- DefaultService
-	named: Tests\Service
+  - DefaultService
+  named: Tests\Service
 
 extensions:
-	ext2: CustomExtension2
+  ext2: CustomExtension2
 
 ext2:
-	ext_key1: ext_value1
-	ext_key2: ext_value2
+  ext_key1: ext_value1
+  ext_key2: ext_value2
 
 application:
-	mapping:
-		*: *
+  mapping:
+    *: *
 ```
 
 And now you'll add another config in your DIC extension using `provideConfig` method:
 
 ```yaml
 parameters:
-	key2: overridden
-	key3: value3
+  key2: overridden
+  key3: value3
 
 services:
-	- Tests\TestService
-	named: Service2
+  - Tests\TestService
+  named: Service2
 
 ext2:
-	ext_key2: overridden
-	ext_key3: ext_value3
+  ext_key2: overridden
+  ext_key3: ext_value3
 
 latte:
-	macros:
-		- App\Grid\Latte\Macros
+  macros:
+    - App\Grid\Latte\Macros
 ```
 
 What is the result? Now there are three global parameters:
@@ -95,16 +95,16 @@ And here comes the most interesting part. If you have a lot of extensions it's g
 
 ```yaml
 ext2:
-	ext_key1: ext_value1
-	ext_key2: overridden
-    ext_key3: ext_value3
+  ext_key1: ext_value1
+  ext_key2: overridden
+  ext_key3: ext_value3
 ```
 
 To get second parameter into service use this:
 
 ```yaml
 services:
-	- Tests\TestService(%%ext_key2%%)
+  - Tests\TestService(%%ext_key2%%)
 ```
 
 Remember that this is possible only if you are using custom config added by `provideConfig` method. It will not work in configs added in bootstrap file (via `Nette\DI\Compiler::addConfig`). This is because only under extension it's possible to get key from the right extension section (`ext2.ext_key2` in this case).
@@ -120,24 +120,24 @@ At this moment there is so called `GroupedNeonAdapter`. It allows you to write s
 
 ```php
 graphql:
-	types:
-		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationRecordType
-		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationsConnectionType
-		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationsEdgeType
-		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationType
+  types:
+  - Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationRecordType
+  - Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationsConnectionType
+  - Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationsEdgeType
+  - Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\WeatherStationType
 ```
 
 After:
 
 ```php
 graphql:
-	types:
-		- Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\( # namespace must end with backslash
-			WeatherStationRecordType
-			WeatherStationsConnectionType
-			WeatherStationsEdgeType
-			WeatherStationType
-		)
+  types:
+    - Adeira\Connector\Devices\Infrastructure\Delivery\API\GraphQL\Type\( # namespace must end with backslash
+      WeatherStationRecordType
+      WeatherStationsConnectionType
+      WeatherStationsEdgeType
+      WeatherStationType
+    )
 ```
 
 This feature is optional and works only in NEON files provided via `provideConfig` method. All classes must be registered anonymously. If it's not possible just don't use this feature.
