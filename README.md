@@ -1,3 +1,5 @@
+> At this moment I don't have time, energy and money to maintain this project. But it's a shame so if you depend on this project and you want to become a sponsor or develop it further please don't hesitate to contact me. Otherwise, I am not able to guarantee bright future of this repo... :)
+
 # Enhanced CompilerExtension for Nette Framework
 
 [![Build Status](https://travis-ci.org/adeira/compiler-extension.svg?branch=master)](https://travis-ci.org/adeira/compiler-extension)
